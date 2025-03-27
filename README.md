@@ -70,8 +70,7 @@ you also can just copy this repository and rename it to your project name and re
 However, you can use `gonew` command to archive the same result.
 
 1. make sure you set `go env -w GOPRIVATE=xxx.com` (to allow go get private repository)
-1. copy this repository and rename it to your project name or use `gonew github.com/pallat/wtf github.com/pallat/wtf`
-1. rename folder `xxxx.git` to `xxxx` using `mv xxxx.git xxxx`  (remove `.git` extension)
+1. copy this repository and rename it to your project name or use `gonew github.com/pallat/wtf github.com/pallat/api`
 1. cd to your project directory `cd xxxx` the
 1. make your project under version control by running `git init`
 1. and run `make setup` to install necessary tools
@@ -146,14 +145,14 @@ However, you can use `gonew` command to archive the same result.
 ### package `app/` is the primary focus for you
 
 - all business logic and application layer should be in this directory. It should be separated by module/package name for example:
-	-  `app/register`
-	-  `app/booking`
-	-  `app/loan`
-	-  `app/credit`
-	-  `app/payment`
-	-  `app/transfer`
-	-  `app/exchange`
-	-  `app/purchase`
+  - `app/register`
+  - `app/booking`
+  - `app/loan`
+  - `app/credit`
+  - `app/payment`
+  - `app/transfer`
+  - `app/exchange`
+  - `app/purchase`
 
   - each package represent a module/domain in the system follow ideal of DDD (Domain Driven Design)
 - each package SHOULD have one file name same as package name e.g. package `app/register` should have `register.go`
@@ -177,10 +176,10 @@ However, you can use `gonew` command to archive the same result.
 - all database connection and schema migration should be in this package
 - all database operation general insert, update, delete, and select not specific to any table should be in this package
 - separate file for each database type e.g.:
-	-  `database/postgres.go`
-	-  `database/mysql.go`
-	-  `database/redis.go`
-	-  `database/kafka.go`
+  - `database/postgres.go`
+  - `database/mysql.go`
+  - `database/redis.go`
+  - `database/kafka.go`
 - **DO NOT** put database operation specific to any table/entity in this package e.g. `database/user.go`, please DON'T DO THIS. the `user_storage.go` should be in `app/user/user_storage.go` instead. so `user_storage.go` will import `database/postgres.go` or `database/mysql.go` etc. to interact with the database.
 
 ### package `httpclient/` is the HTTP client for external API
@@ -294,13 +293,13 @@ However, you can use `gonew` command to archive the same result.
 
 - Any folder that **NOT** a Go's package please name it with __prefix__ `.` e.g. `.scripts/`, `.local/` etc.
 - Any new business logic should be in `app/` directory and should be separated by module/package name.
-	- e.g. if you have a new business logic for `register` module, you should create a new package `app/register` and put all the business logic in this package.
+  - e.g. if you have a new business logic for `register` module, you should create a new package `app/register` and put all the business logic in this package.
 - **SHOULD NOT** call `controller` in the package name. It should be `handler` instead.
 - **SHOULD NOT** create package name by functionally/layers e.g. `app/controller`, `app/service`, `app/repository`, `app/model`
   - Because in Go, package name should be by domain or business features not by functionally/layers.
   - Whenever you facing a **CYCLE IMPORT (circular dependency)**, it's a sign that you are doing it **WRONG way**.(sometime it cause by package name by functionally/layers)
 - **Avoid meaningless package names** create package name with `common`, `utils`, `helper`, `enums` etc.
-	- Because it's too generic and not specific to any domain or business features.
+  - Because it's too generic and not specific to any domain or business features.
 
 ### Naming Convention
 
@@ -308,8 +307,8 @@ However, you can use `gonew` command to archive the same result.
 - local variable name should be in **mixedCaps** (camelCase) e.g. `var maxUsers = 100` or `maxUsers := 100`
 - In Go is to use **MixedCaps** (PascalCase) or **mixedCaps** (camelCase) rather than underscores to write multiword names.
 - a **constant name** should be in **MixedCaps** (public constant) or **mixedCaps** (private constant)
-	- GOOD: `const MaxUsers = 100`, `const maxUsers = 100`
-	- BAD: `const MAX_USERS = 100`, `const max_users = 100` (because it's not idiomatic in Go)
+  - GOOD: `const MaxUsers = 100`, `const maxUsers = 100`
+  - BAD: `const MAX_USERS = 100`, `const max_users = 100` (because it's not idiomatic in Go)
 - function name should be in **MixedCaps** (PascalCase) or **mixedCaps** (camelCase) e.g. `GetUser`, `getOrder`, `CreateOrder`, `createOrder`
 - struct name should be in **MixedCaps** (PascalCase) or **mixedCaps** (camelCase) e.g. `type Order struct {}`, `type order struct {}`
 
@@ -319,20 +318,20 @@ However, you can use `gonew` command to archive the same result.
   - GOOD: `user_handler.go`, `user_storage.go`, `user_http_service.go`, `user_http_service_test.go`, `user.go`
   - BAD: `UserHandler.go`, `userHandler.go`, `UserHandler_test.go`, `User.go`
 - file name should represent the **responsibility** of the file what it does.
-	- example logger:
-		- `logger/logger.go`
-		- `logger/level.go`
-		- `logger/mask.go`
-		- `logger/request_response.go`
-		- etc.
+  - example logger:
+  - `logger/logger.go`
+	  - `logger/level.go`
+	  - `logger/mask.go`
+	  - `logger/request_response.go`
+	  - etc.
 
 		when you want to __make change about log level__ which file you should look at? `logger/level.go` right? so it's easy to find the file.
-	- example auth:
-		- `auth/cors.go`
-		- `auth/basic_auth.go`
-		- `auth/jwt.go`
-		- `auth/middleware.go`
-		- etc.
+  - example auth:
+	  - `auth/cors.go`
+	  - `auth/basic_auth.go`
+	  - `auth/jwt.go`
+	  - `auth/middleware.go`
+	  - etc.
 
 		when you want to __make change about basic authenication__ which file you should look at? `auth/basic_auth.go` right? so it's easy to find the file.
 	- example register:
@@ -420,21 +419,27 @@ for example The HTTP server type in **package http**.
 
 **Simplify function names**. When a function in package pkg returns a value of type pkg.Pkg (or *pkg.Pkg), the function name can often omit the type name without confusion:
 
+```go
 	start := time.Now()                                  // start is a time.Time
 	t, err := time.Parse(time.Kitchen, "6:06PM")         // t is a time.Time
 	ctx = context.WithTimeout(ctx, 10*time.Millisecond)  // ctx is a context.Context
 	ip, ok := userip.FromContext(ctx)                    // ip is a net.IP
+```
 
 A function named New in package pkg returns a *value* of type pkg.Pkg. This is a standard entry point for client code using that type:
 
+```go
 	q := list.New()  // q is a *list.List
+```
 
 When a function returns a value of type pkg.T, where T is not Pkg, the function name may include T to make client code easier to understand. A common situation is a package with multiple New-like functions:
 
+```go
 	d, err := time.ParseDuration("10s")  // d is a time.Duration
 	elapsed := time.Since(start)         // elapsed is a time.Duration
 	ticker := time.NewTicker(d)          // ticker is a *time.Ticker
 	timer := time.NewTimer(d)            // timer is a *time.Timer
+```
 
 ### Interface Naming Convention
 
@@ -493,14 +498,12 @@ this repository already have a code to gracefully shutting down the server. you 
 - [Viper : Configuration](github.com/spf13/viper) for environment variables because it's complex and required external dependencies use Go standard library instead.
 - [GORM : ORM](github.com/go-gorm/gorm) for database operation because it's complex and required external dependencies use Go standard library instead. however, you can still use it in simple operation and take your own risk.
 
-
 ## Bad Practices
 
 - bad naming erros as `Exception` e.g. `BaseException.go`, `NotFoundException.go` there is **NO** Exception in **Go**
 - bad naming package with `controller` or `service`, `repository`
 - bad naming folder start with src with `src/`, `src/common`, `src/utils`
 - bad naming too generic name `common`, `utils`, `helper`, `enums`
-
 
 ## Contribution-Guide
 
