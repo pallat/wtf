@@ -195,7 +195,7 @@ func TestWriter(t *testing.T) {
 
 		err := serror.New("test message")
 		w.statusCode = http.StatusInternalServerError
-		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err)))
+		fmt.Fprintf(w, `{"message": "%s"}`, err)
 
 		if !bytes.Contains(buf.Bytes(), []byte(`msg="test message"`)) {
 			t.Errorf("%q should contain, actual\n%q\n\n", `msg="test message"`, buf.Bytes())
@@ -208,7 +208,7 @@ func TestWriter(t *testing.T) {
 			t.Error("this writer does not use serror.DecodeMessage to extract log data")
 		}
 
-		if `{"message": "test message"}` != httpw.Body.String() {
+		if httpw.Body.String() != `{"message": "test message"}` {
 			t.Errorf("response json should clean from serror add-ons message:\n%q\n", httpw.Body.String())
 		}
 	})
@@ -228,7 +228,7 @@ func TestWriter(t *testing.T) {
 
 		err := serror.New("invalid character 'a' looking for beginning of object key string")
 		w.statusCode = http.StatusInternalServerError
-		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err)))
+		fmt.Fprintf(w, `{"message": "%s"}`, err)
 
 		if !bytes.Contains(buf.Bytes(), []byte(`msg="invalid character 'a' looking for beginning of object key string"`)) {
 			t.Errorf("%q should contain, actual\n%q\n\n", `msg="test message"`, buf.Bytes())
@@ -241,7 +241,7 @@ func TestWriter(t *testing.T) {
 			t.Error("this writer does not use serror.DecodeMessage to extract log data")
 		}
 
-		if `{"message": "invalid character 'a' looking for beginning of object key string"}` != httpw.Body.String() {
+		if httpw.Body.String() != `{"message": "invalid character 'a' looking for beginning of object key string"}` {
 			t.Errorf("response json should clean from serror add-ons message:\n%q\n", httpw.Body.String())
 		}
 	})
@@ -261,7 +261,7 @@ func TestWriter(t *testing.T) {
 
 		err := serror.New("invalid character 'a' looking for beginning of object key string")
 		w.statusCode = http.StatusInternalServerError
-		w.Write([]byte(fmt.Sprintf(`{"message": "\u003ctest\u003e%s"}`, err)))
+		fmt.Fprintf(w, `{"message": "\u003ctest\u003e%s"}`, err)
 
 		if !bytes.Contains(buf.Bytes(), []byte(`msg="<test>invalid character 'a' looking for beginning of object key string"`)) {
 			t.Errorf("%q should contain, actual\n%q\n\n", `msg="test message"`, buf.Bytes())
@@ -274,7 +274,7 @@ func TestWriter(t *testing.T) {
 			t.Error("this writer does not use serror.DecodeMessage to extract log data")
 		}
 
-		if `{"message": "<test>invalid character 'a' looking for beginning of object key string"}` != httpw.Body.String() {
+		if httpw.Body.String() != `{"message": "<test>invalid character 'a' looking for beginning of object key string"}` {
 			t.Errorf("response json should clean from serror add-ons message:\n%q\n", httpw.Body.String())
 		}
 	})

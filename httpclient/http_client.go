@@ -54,7 +54,8 @@ func NewHTTPClientWithCA(certPool *x509.CertPool, options ...OptionFunc) *http.C
 	t.MaxConnsPerHost = maxConnsPerHost
 	t.MaxIdleConnsPerHost = maxIdleConnsPerHost
 	t.TLSClientConfig = &tls.Config{
-		RootCAs: certPool,
+		RootCAs:    certPool,
+		MinVersion: tls.VersionTLS12,
 	}
 	options = append(options, jsonOption)
 	return &http.Client{

@@ -75,7 +75,7 @@ func TestWrapSkipOneStepBack_ErrorOccurredFromCallerofCaller(t *testing.T) {
 func TestCallerNotRecoverSkip(t *testing.T) {
 	const notRecover = 4
 	s := caller(notRecover)
-	if "" != s {
+	if s != "" {
 		t.Error("the origin not recover skip is 4")
 	}
 }
@@ -83,11 +83,11 @@ func TestCallerNotRecoverSkip(t *testing.T) {
 func TestDecodeMessageEmptyString(t *testing.T) {
 	msg, atts := DecodeMessage("")
 
-	if "" != msg {
+	if msg != "" {
 		t.Errorf("given empty string to Decode expect empty string msg but actual %q\n", msg)
 	}
 
-	if 0 != len(atts) {
+	if len(atts) != 0 {
 		t.Errorf("given empty string to DecodeMessage expect 0 lenght Attrs but actual %d\n", len(atts))
 	}
 }
@@ -146,7 +146,7 @@ func TestDecodeMessageWrongPattern(t *testing.T) {
 		t.Errorf("expect %q string msg but actual %q\n", givenMsg, msg)
 	}
 
-	if 0 != len(atts) {
+	if len(atts) != 0 {
 		t.Errorf("given wrong pattern to DecodeMessage expect 0 lenght Attrs but actual %d\n", len(atts))
 	}
 }
@@ -159,7 +159,7 @@ func TestDecodeMessageWrongSourcePattern(t *testing.T) {
 		t.Errorf("expect %q string msg but actual %q\n", givenMsg, msg)
 	}
 
-	if 0 != len(atts) {
+	if len(atts) != 0 {
 		t.Errorf("given wrong pattern to DecodeMessage expect 0 lenght Attrs but actual %d\n", len(atts))
 	}
 }

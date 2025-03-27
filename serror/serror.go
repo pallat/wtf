@@ -111,12 +111,12 @@ func DecodeMessage(s string) (msg string, attrs []slog.Attr) {
 	serrorMsg := s[serrorFrom+2 : serrorTo]
 
 	elem := strings.Split(serrorMsg, separator)
-	if 2 != len(elem) {
+	if len(elem) != 2 {
 		return s, []slog.Attr{}
 	}
 
 	sources := strings.Split(elem[1], sourceSeparator)
-	if 3 != len(sources) {
+	if len(sources) != 3 {
 		return s, []slog.Attr{}
 	}
 
