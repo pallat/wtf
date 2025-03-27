@@ -1,0 +1,32 @@
+#!/usr/bin/awk -f
+
+# colorize - add color to go test output
+# usage:
+#   go test ./... | ./colorize
+#
+
+BEGIN {
+    RED="\033[31m"
+    GREEN="\033[32m"
+    GREY="\033[90m"
+		ORANGE="\033[33m"
+    CYAN="\033[36m"
+    BRRED="\033[91m"
+    BRGREEN="\033[92m"
+    BRCYAN="\033[96m"
+    NORMAL="\033[0m"
+}
+         { color=NORMAL }
+/^ok /   { color=BRGREEN }
+/^=== RUN  /  { color=GREY }
+/^FAIL/  { color=BRRED }
+/^SKIP/  { color=BRCYAN }
+/PASS:/  { color=GREEN }
+/^PASS/  { color=GREEN }
+/FAIL:/  { color=RED }
+/Error Trace:	/ { color=ORANGE }
+/Error:      	/ { color=RED }
+/SKIP:/  { color=CYAN }
+         { print color $0 NORMAL }
+
+# vi: ft=awk

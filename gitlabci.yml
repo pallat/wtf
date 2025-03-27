@@ -1,0 +1,130 @@
+spec:
+  inputs:
+    cloud_platform:
+      type: string
+      description: either `gcp` or `azr`
+      default: "gcp"
+include:
+  - local: base-refactor/validate.yml
+  - local: base-refactor/test-dependencyCheck.yml
+  - local: base-refactor/test-secretDetection.yml
+  - local: base-refactor/test-go.yml
+  - local: base-refactor/containerize.yml
+    inputs:
+      cloud_platform: $[[ inputs.cloud_platform ]]
+  - local: base-refactor/scan-sonarqube.yml
+  - local: base-refactor/scan-rapid7.yml
+  - local: base-refactor/scan-fortify.yml
+  - local: base-refactor/scan-nexusiq.yml
+  - local: base-refactor/deploy.yml
+
+#### Variable ####
+variables:
+  GOCACHE: ${CI_PROJECT_DIR}/.go/cache
+  GO_VERSION: 1.17.3
+  NEW_PIPELINE: "false"
+  SKIP_SIT: "false"
+
+#### Pipeline Stages ####
+
+stages:
+  - validate # Tag Validation (Ensure Dev is tag image from release branch)
+  - test # For Test stage like "Dependencies Check" and "Secret Detections"
+  - containerize # Build Container Images / Build Go (Go build part usually in dockerfile)
+  - scan # Sonarqube and Rapid7 Job
+  - deploy # Update Image Tag to Kustomize Repository
+
+#==== validate ====
+Validate Release Tag:
+  tags:
+    - ccoe-ss
+  extends:
+    - .validate_tag
+  needs: []
+
+Validate Dockerfile:
+  tags:
+    - ccoe-ss
+  extends:
+    - .validate_dockerfile
+  needs: []
+
+#==== test ====
+Coverage Test (Go):
+  tags:
+    - ccoe-m
+  extends:
+    - .unit_test_go
+  needs:
+    - job: "Validate Dockerfile"
+
+Secret Detection (Gitlab):
+  tags:
+    - ccoe-s
+  extends:
+    - .secret_detection
+  needs:
+    - job: "Validate Release Tag"
+      optional: true
+
+Dependency Scan (Owasp):
+  tags:
+    - ccoe-m
+  extends:
+    - .owasp_dependency_check
+  needs:
+    - job: "Validate Release Tag"
+      optional: true
+
+#==== conatinerize ====
+Build Container (Go):
+  tags:
+    - ccoe-build
+  extends:
+    - .build_docker
+  needs:
+    - job: "Validate Release Tag"
+      optional: true
+
+#==== scan ====
+Code Quality (Sonarqube):
+  tags:
+    - ccoe-s
+  extends:
+    - .sonar_for_go
+  needs:
+    - job: "Dependency Scan (Owasp)"
+
+Container Scan (Rapid7):
+  tags:
+    - ccoe-s
+  extends:
+    - .container_scan
+  needs:
+    - job: "Build Container (Go)"
+
+# SAST (Fortify):
+#   tags:
+#     - ccoe-m
+#   extends:
+#     - .fortify_sast_go
+#   needs:
+#     - job: "Validate Release Tag"
+#       optional: true
+
+Policy Evalutaion (NexusIQ):
+  tags:
+    - ccoe-s
+  extends:
+    - .nexus_iq_policy_eval
+  needs:
+    - job: "Validate Release Tag"
+      optional: true
+
+#==== deploy ====
+Update Tag:
+  tags:
+    - ccoe-ss
+  extends:
+    - .update-tag
+  needs: ["Build Container (Go)"]

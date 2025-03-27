@@ -1,0 +1,95 @@
+basePath: /
+consumes:
+    - application/json
+definitions:
+    CheckLicenseByTokenRequest:
+        properties:
+            tokenHash:
+                type: string
+                x-go-name: TokenHash
+        type: object
+        x-go-package: github.com/pallat/wtf/app/license
+    CheckLicenseByTokenResponse:
+        properties:
+            code:
+                format: int64
+                type: integer
+                x-go-name: Code
+            data:
+                items:
+                    $ref: '#/definitions/LicenseInfo'
+                type: array
+                x-go-name: Data
+            expiredAt:
+                format: date-time
+                type: string
+                x-go-name: ExpiredAt
+            message:
+                type: string
+                x-go-name: Message
+            newToken:
+                type: string
+                x-go-name: NewToken
+        type: object
+        x-go-package: github.com/pallat/wtf/app/license
+    LicenseInfo:
+        properties:
+            licenseDesc:
+                type: string
+                x-go-name: LicenseDesc
+            licenseDocNoEncrypt:
+                type: string
+                x-go-name: LicenseDocNoEncrypt
+            licenseExpiredDate:
+                format: date-time
+                type: string
+                x-go-name: LicenseExpiredDate
+            licenseType:
+                type: string
+                x-go-name: LicenseType
+            officeName:
+                type: string
+                x-go-name: OfficeName
+        type: object
+        x-go-package: github.com/pallat/wtf/app/license
+host: localhost:8080
+info:
+    description: Documentation of our TechCoach Template API.
+    title: TechCoach Template.
+    version: 1.0.0
+paths:
+    /licenses:
+        post:
+            operationId: checkLicenseWithDocNo
+            parameters:
+                - in: header
+                  name: X-Ref-Id
+                  type: string
+                  x-go-name: XRefID
+                - in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/CheckLicenseByTokenRequest'
+            responses:
+                "200":
+                    $ref: '#/responses/licensesResponse'
+            tags:
+                - licenses
+produces:
+    - application/json
+responses:
+    licensesResponse:
+        description: ""
+        schema:
+            $ref: '#/definitions/CheckLicenseByTokenResponse'
+schemes:
+    - http
+security:
+    - key:
+        - '[]'
+securityDefinitions:
+    key:
+        in: header
+        name: Authorization
+        type: apiKey
+swagger: "2.0"
