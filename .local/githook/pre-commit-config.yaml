@@ -15,12 +15,14 @@ repos:
         stages: [pre-commit]
       - id: check-added-large-files
         stages: [pre-commit]
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v1.59.1
+  - repo: local
     hooks:
       - id: golangci-lint
+        name: golangci-lint
         language: golang
-        always_run: true
+        entry: golangci-lint run ./...
+        pass_filenames: false
+        types: [go]
         stages: [pre-commit]
   - repo: local
     hooks:
